@@ -27,24 +27,34 @@ pipeline {
             }
         }
 
-        stage('Quality Gate') {
+stage('Quality Gate') {
             steps {
                 script {
-                    // Wait for SonarQube analysis to be completed
-                    timeout(time: 1, unit: 'HOURS') {
-                        waitForQualityGate abortPipeline: true
+                    try {
+                        timeout(time: 30, unit: 'SECONDS') {
+                            def qg = waitForQualityGate()
+                            echo "Quality Gate status: ${qg.status}"
+                            if (qg.status != 'OK') {
+                                error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                            }
+                        }
+                    } catch (Exception e) {
+                        echo "Error while waiting for quality gate: ${e.message}"
+                        error "Pipeline aborted due to quality gate failure"
                     }
                 }
             }
         }
     }
-
     post {
+        always {
+            echo 'This will always run'
+        }
         success {
-            echo 'Pipeline completed successfully.'
+            echo 'This will run only if successful'
         }
         failure {
-            echo 'Pipeline failed.'
+            echo 'This will run only if failed'
         }
     }
 }
