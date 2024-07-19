@@ -18,7 +18,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 // Install Python dependencies
-                sh 'pip install -r requirements.txt'
+                bat 'pip install -r requirements.txt'
             }
         }
 
@@ -27,7 +27,7 @@ pipeline {
                 script {
                     // Run SonarQube scan
                     withSonarQubeEnv('SonarQube_Server') { // Ensure 'SonarQube' matches the name configured in Jenkins
-                        sh "sonar-scanner -Dsonar.projectKey=my-python-project -Dsonar.sources=. -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONARQUBE_TOKEN"
+                        bat "sonar-scanner -Dsonar.projectKey=my-python-project -Dsonar.sources=. -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONARQUBE_TOKEN"
                     }
                 }
             }
