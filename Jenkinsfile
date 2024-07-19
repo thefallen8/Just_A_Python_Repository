@@ -2,6 +2,9 @@ pipeline {
     agent any
     environment {
         scannerHome = tool 'SonarQube Scanner'
+        // Define SonarQube URL and token
+        SONARQUBE_URL = 'http://localhost:9000/' // Replace with your SonarQube server URL
+        SONARQUBE_TOKEN = 'sqa_e6ae6bba0ff58cbff5656b2d6d34fcc4fef5150d' // Replace with your SonarQube token ID in Jenkins
     }
     stages {
         stage('Checkout') {
@@ -14,7 +17,7 @@ pipeline {
                 script {
                     def scannerHome = tool 'SonarQube Scanner'
                     withSonarQubeEnv('SonarQube_Server') {
-                        bat "sonar-scanner -Dsonar.pullrequest.key=${env.CHANGE_ID} -Dsonar.pullrequest.branch=${env.CHANGE_BRANCH} -Dsonar.pullrequest.base=${env.CHANGE_TARGET} -Dsonar.projectKey=com.efx.sonarscan -Dsonar.pullrequest.provider=github -Dsonar.pullrequest.github.repository=thefallen8/Just_A_Python_Repository -Dsonar.pullrequest.github.endpoint=https://api.github.com"
+                        bat "sonar-scanner.bat -Dsonar.projectKey=my-python-project -Dsonar.sources=. -Dsonar.host.url=$SONARQUBE_URL -Dsonar.login=$SONARQUBE_TOKEN"
                     }
                 }
             }
