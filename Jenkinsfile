@@ -27,34 +27,20 @@ pipeline {
             }
         }
 
-pipeline {
-    agent any
-    environment {
-        scannerHome = tool 'SonarQube Scanner'
-    }
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-        stage('SonarQube Analysis') {
+        stage('Quality Gate') {
             steps {
                 script {
-                    def scannerHome = tool 'SonarQube Scanner'
-                    withSonarQubeEnv('SonarQube') {
-                        bat """
-                            "%scannerHome%\\bin\\sonar-scanner.bat" ^
-                            -Dsonar.projectKey=my_project_key ^
-                            -Dsonar.sources=. ^
-                            -Dsonar.python.version=3 ^
-                            -Dsonar.pullrequest.key=%CHANGE_ID% ^
-                            -Dsonar.pullrequest.branch=%CHANGE_BRANCH% ^
-                            -Dsonar.pullrequest.base=%CHANGE_TARGET% ^
-                            -Dsonar.pullrequest.provider=GitHub ^
-                            -Dsonar.pullrequest.github.repository=owner/repo ^
-                            -Dsonar.pullrequest.github.endpoint=https://api.github.com
-                        """
+                    try {
+                        timeout(time: 30, unit: 'SECONDS') {
+                            def qg = waitForQualityGate()
+                            echo "Quality Gate status: ${qg.status}"
+                            if (qg.status != 'OK') {
+                                error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                            }
+                        }
+                    } catch (Exception e) {
+                        echo "Error while waiting for quality gate: ${e.message}"
+                        error "Pipeline aborted due to quality gate failure"
                     }
                 }
             }
@@ -65,10 +51,10 @@ pipeline {
             echo 'This will always run'
         }
         success {
-            echo 'SonarQube analysis completed successfully'
+            echo 'This will run only if successful'
         }
         failure {
-            echo 'SonarQube analysis failed'
+            echo 'This will run only if failed'
         }
     }
 }
