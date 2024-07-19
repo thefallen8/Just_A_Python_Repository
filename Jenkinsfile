@@ -2,8 +2,9 @@ pipeline {
     agent any
 
     triggers {
-        githubPush()
+        pollSCM('* * * * *') // Poll every minute
     }
+
 
     environment {
         // Define SonarQube URL
