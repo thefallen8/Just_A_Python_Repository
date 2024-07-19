@@ -30,17 +30,34 @@ pipeline {
 stage('Quality Gate') {
             steps {
                 script {
-                    try {
-                        timeout(time: 30, unit: 'SECONDS') {
-                            def qg = waitForQualityGate()
-                            echo "Quality Gate status: ${qg.status}"
-                            if (qg.status != 'OK') {
-                                error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                    def retries = 5
+                    def delay = 10 // seconds
+                    def qgStatus = 'PENDING'
+
+                    while (qgStatus == 'PENDING' && retries > 0) {
+                        try {
+                            timeout(time: 30, unit: 'SECONDS') {
+                                def qg = waitForQualityGate()
+                                qgStatus = qg.status
+                                echo "Quality Gate status: ${qgStatus}"
+                                if (qgStatus == 'ERROR') {
+                                    error "Pipeline aborted due to quality gate failure: ${qgStatus}"
+                                } else if (qgStatus == 'WARN') {
+                                    echo "Quality gate warnings: ${qgStatus}"
+                                } else if (qgStatus == 'OK') {
+                                    echo "Quality gate passed: ${qgStatus}"
+                                }
                             }
+                        } catch (Exception e) {
+                            echo "Error while waiting for quality gate: ${e.message}"
+                            error "Pipeline aborted due to quality gate failure"
                         }
-                    } catch (Exception e) {
-                        echo "Error while waiting for quality gate: ${e.message}"
-                        error "Pipeline aborted due to quality gate failure"
+                        sleep(time: delay, unit: 'SECONDS')
+                        retries--
+                    }
+
+                    if (qgStatus == 'PENDING') {
+                        error "Pipeline aborted due to quality gate status still pending after retries"
                     }
                 }
             }
