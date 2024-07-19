@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        scannerHome = tool 'SonarQube_Server'
+        scannerHome = tool 'SonarQube Scanner'
     }
     stages {
         stage('Checkout') {
