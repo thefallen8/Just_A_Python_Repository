@@ -27,6 +27,39 @@ pipeline {
             }
         }
 
+pipeline {
+    agent any
+    environment {
+        scannerHome = tool 'SonarQube Scanner'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    def scannerHome = tool 'SonarQube Scanner'
+                    withSonarQubeEnv('SonarQube') {
+                        bat """
+                            "%scannerHome%\\bin\\sonar-scanner.bat" ^
+                            -Dsonar.projectKey=my_project_key ^
+                            -Dsonar.sources=. ^
+                            -Dsonar.python.version=3 ^
+                            -Dsonar.pullrequest.key=%CHANGE_ID% ^
+                            -Dsonar.pullrequest.branch=%CHANGE_BRANCH% ^
+                            -Dsonar.pullrequest.base=%CHANGE_TARGET% ^
+                            -Dsonar.pullrequest.provider=GitHub ^
+                            -Dsonar.pullrequest.github.repository=owner/repo ^
+                            -Dsonar.pullrequest.github.endpoint=https://api.github.com
+                        """
+                    }
+                }
+            }
+        }
+    }
     post {
         always {
             echo 'This will always run'
@@ -38,5 +71,4 @@ pipeline {
             echo 'SonarQube analysis failed'
         }
     }
-}
 }
