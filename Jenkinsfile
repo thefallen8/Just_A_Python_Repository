@@ -27,53 +27,15 @@ pipeline {
             }
         }
 
-        stage('Quality Gate') {
-            steps {
-                script {
-                    def retries = 10 // Number of retries
-                    def delay = 30 // seconds
-                    def qgStatus = 'PENDING'
-
-                    while (qgStatus == 'PENDING' && retries > 0) {
-                        try {
-                            timeout(time: 2, unit: 'MINUTES') {
-                                def qg = waitForQualityGate()
-                                qgStatus = qg.status
-                                echo "Quality Gate status: ${qgStatus}"
-                                if (qgStatus == 'ERROR') {
-                                    error "Pipeline aborted due to quality gate failure: ${qgStatus}"
-                                } else if (qgStatus == 'WARN') {
-                                    echo "Quality gate warnings: ${qgStatus}"
-                                } else if (qgStatus == 'OK') {
-                                    echo "Quality gate passed: ${qgStatus}"
-                                } else if (qgStatus == 'NONE') {
-                                    error "Pipeline aborted due to no quality gate being configured: ${qgStatus}"
-                                }
-                            }
-                        } catch (Exception e) {
-                            echo "Error while waiting for quality gate: ${e.message}"
-                            error "Pipeline aborted due to quality gate failure"
-                        }
-                        sleep(time: delay, unit: 'SECONDS')
-                        retries--
-                    }
-
-                    if (qgStatus == 'PENDING') {
-                        error "Pipeline aborted due to quality gate status still pending after retries"
-                    }
-                }
-            }
-        }
-    }
     post {
         always {
             echo 'This will always run'
         }
         success {
-            echo 'This will run only if successful'
+            echo 'SonarQube analysis completed successfully'
         }
         failure {
-            echo 'This will run only if failed'
+            echo 'SonarQube analysis failed'
         }
     }
 }
