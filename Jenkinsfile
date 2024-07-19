@@ -4,7 +4,7 @@ pipeline {
     environment {
         // Define SonarQube URL and token
         SONARQUBE_URL = 'http://localhost:9000/' // Replace with your SonarQube server URL
-        SONARQUBE_TOKEN = credentials('sqa_e6ae6bba0ff58cbff5656b2d6d34fcc4fef5150d') // Replace with your SonarQube token ID in Jenkins
+        SONARQUBE_TOKEN = 'sqa_e6ae6bba0ff58cbff5656b2d6d34fcc4fef5150d' // Replace with your SonarQube token ID in Jenkins
     }
 
     stages {
