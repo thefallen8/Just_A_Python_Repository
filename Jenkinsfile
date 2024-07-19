@@ -27,7 +27,7 @@ pipeline {
             }
         }
 
-stage('Quality Gate') {
+        stage('Quality Gate') {
             steps {
                 script {
                     def retries = 5
@@ -46,6 +46,8 @@ stage('Quality Gate') {
                                     echo "Quality gate warnings: ${qgStatus}"
                                 } else if (qgStatus == 'OK') {
                                     echo "Quality gate passed: ${qgStatus}"
+                                } else if (qgStatus == 'NONE') {
+                                    error "Pipeline aborted due to no quality gate being configured: ${qgStatus}"
                                 }
                             }
                         } catch (Exception e) {
