@@ -15,14 +15,8 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
-            steps {
-                // Install Python dependencies
-                bat 'pip install -r requirements.txt'
-            }
-        }
 
-        stage('SonarQube Analysis') {
+    stage('SonarQube Analysis') {
             steps {
                 script {
                     // Run SonarQube scan
