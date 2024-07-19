@@ -30,13 +30,13 @@ pipeline {
         stage('Quality Gate') {
             steps {
                 script {
-                    def retries = 5
-                    def delay = 10 // seconds
+                    def retries = 10 // Number of retries
+                    def delay = 30 // seconds
                     def qgStatus = 'PENDING'
 
                     while (qgStatus == 'PENDING' && retries > 0) {
                         try {
-                            timeout(time: 30, unit: 'SECONDS') {
+                            timeout(time: 2, unit: 'MINUTES') {
                                 def qg = waitForQualityGate()
                                 qgStatus = qg.status
                                 echo "Quality Gate status: ${qgStatus}"
