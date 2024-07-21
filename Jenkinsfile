@@ -19,6 +19,22 @@ triggers {
             }
         }
 
+
+                stage('Extract Branch Name') {
+            steps {
+                script {
+                    // Extract the branch name from the webhook payload
+                    def ref = "${GIT_COMMIT_REF}"
+                    if (ref.startsWith('refs/heads/')) {
+                        env.BRANCH_NAME = ref.replaceFirst('refs/heads/', '')
+                    } else {
+                        env.BRANCH_NAME = 'main'
+                    }
+                    echo "Branch Name: ${env.BRANCH_NAME}"
+                }
+            }
+        }
+        
         stage('SonarQube Analysis') {
             steps {
                 script {
