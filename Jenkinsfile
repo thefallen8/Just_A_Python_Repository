@@ -18,7 +18,6 @@ triggers {
                 git url: 'https://github.com/thefallen8/Just_A_Python_Repository.git', branch: 'main', credentialsId: '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' // Replace with your repository URL and branch
             }
         }
-    stages {
         stage('Extract and Concatenate Payload Information') {
             steps {
                 script {
@@ -40,7 +39,7 @@ triggers {
                 }
             }
         }
-    }
+    
         
         stage('SonarQube Analysis') {
             steps {
