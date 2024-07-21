@@ -1,8 +1,8 @@
 pipeline {
     agent any
 
-    triggers {
-        pollSCM('* * * * *') // Poll every minute
+triggers {
+        githubPush() // Trigger on GitHub push events
     }
 
 
