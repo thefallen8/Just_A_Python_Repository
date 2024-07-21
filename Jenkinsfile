@@ -15,7 +15,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout code from GitHub repository
-                git url: 'https://github.com/thefallen8/Just_A_Python_Repository.git', branch: 'main', credentialsId: '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' // Replace with your repository URL and branch
+                git url: 'https://github.com/thefallen8/Just_A_Python_Repository.git', branch: 'main', credentialsId: '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' // Replace with your repository URL and branch
             }
         }
 
