@@ -18,11 +18,12 @@ triggers {
                 git url: 'https://github.com/thefallen8/Just_A_Python_Repository.git', branch: 'main', credentialsId: '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' // Replace with your repository URL and branch
             }
         }
-        stage('Extract and Concatenate Payload Information') {
+                stage('Extract and Concatenate Payload Information') {
             steps {
                 script {
-                    // Assuming the payload is obtained from an environment variable or some source
-                    def payload = readJSON(text: env.PAYLOAD)
+                    // Parse the JSON payload manually
+                    def jsonSlurper = new groovy.json.JsonSlurper()
+                    def payload = jsonSlurper.parseText(env.PAYLOAD)
 
                     // Extract the branch name from ref
                     def ref = payload.ref
