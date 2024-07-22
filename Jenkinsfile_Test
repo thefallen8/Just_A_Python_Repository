@@ -1,2 +1,44 @@
-echo "Repository URL: $PAYLOAD"
-echo "Reference: $BRANCH"
+pipeline {
+    agent any
+    environment {
+        // Initialize environment variables
+        FINAL_URL = ''
+    }
+    stages {
+        stage('Extract and Concatenate') {
+            steps {
+                script {
+                    // Define and parse the payload
+                    def json = readJSON text: '{"ref": "refs/heads/feature/Branch_20240722_123048_082", "repository": {"svn_url": "https://github.com/thefallen8/Just_A_Python_Repository"}}'
+                    
+                    // Extract svn_url and ref
+                    def svnUrl = json.repository.svn_url
+                    def ref = json.ref
+                    
+                    // Extract branch from ref
+                    def branch = ref.split('/')[2..-1].join('/')
+                    
+                    // Construct the final URL
+                    def finalUrl = "${svnUrl}/tree/${branch}"
+                    
+                    // Set the final URL as a global environment variable
+                    env.FINAL_URL = finalUrl
+                    
+                    // Print the results
+                    echo "Repository URL: ${svnUrl}"
+                    echo "Reference: ${branch}"
+                    echo "Final URL: ${finalUrl}"
+                }
+            }
+        }
+        stage('Use Final URL') {
+            steps {
+                script {
+                    // Access the global environment variable
+                    echo "Accessing FINAL_URL: ${env.FINAL_URL}"
+                    // You can use env.FINAL_URL here for other operations
+                }
+            }
+        }
+    }
+}
