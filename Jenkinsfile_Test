@@ -6,8 +6,8 @@ pipeline {
             steps {
                 script {
                     // Retrieve the JSON values from environment variables
-                    def ref = env.PAYLOAD
-                    def svnUrl = env.SVN_URL
+                    def ref = env.BRANCH
+                    def svnUrl = env.PAYLOAD
 
                     // Check if ref and svnUrl are present
                     if (ref && svnUrl) {
