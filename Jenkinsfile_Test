@@ -1,18 +1,11 @@
 echo "BRANCH: $BRANCH"
 
-// Declare global variable
-def globalBranch = ''
-
-// Function to set the global variable
-def setBranch(branch) {
-    def keyword = 'feature/'
-    def startIndex = branch.indexOf(keyword)
-    globalBranch = branch.substring(startIndex)
-}
-
-
-// Use the global variable later
-println "Extracted branch: ${globalBranch}"
+branch="$BRANCH"
+def keyword = 'feature/'
+def startIndex = branch.indexOf(keyword)
+def end=branch.length()
+def final_branch= branch.substring(startIndex,end)
+println "Branch $final_branch"
 
 pipeline {
     agent any
@@ -31,7 +24,7 @@ triggers {
         stage('Checkout') {
             steps {
                 // Checkout code from GitHub repository
-                git url: 'https://github.com/thefallen8/Just_A_Python_Repository.git', branch:"${globalBranch}", credentialsId: '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' // Replace with your repository URL and branch
+                git url: 'https://github.com/thefallen8/Just_A_Python_Repository.git', branch:"${$final_branch}", credentialsId: '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' // Replace with your repository URL and branch
             }
         }
         
