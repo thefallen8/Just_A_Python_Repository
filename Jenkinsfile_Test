@@ -31,7 +31,7 @@ triggers {
         stage('Checkout') {
             steps {
                 // Checkout code from GitHub repository
-                git url: 'https://github.com/thefallen8/Just_A_Python_Repository.git', branch:${globalBranch}, credentialsId: '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' // Replace with your repository URL and branch
+                git url: 'https://github.com/thefallen8/Just_A_Python_Repository.git', branch:"${globalBranch}", credentialsId: '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' // Replace with your repository URL and branch
             }
         }
         
