@@ -1,11 +1,12 @@
 pipeline {
     agent any
     environment {
-        // Initialize environment variables
-        FINAL_URL = ''
+        // Initialize environment variables for global use
+        SVN_URL = ''
+        BRANCH = ''
     }
     stages {
-        stage('Extract and Concatenate') {
+        stage('Extract Information') {
             steps {
                 script {
                     // Define and parse the payload
@@ -18,27 +19,34 @@ pipeline {
                     // Extract branch from ref
                     def branch = ref.split('/')[2..-1].join('/')
                     
-                    // Construct the final URL
-                    def finalUrl = "${svnUrl}/tree/${branch}"
-                    
-                    // Set the final URL as a global environment variable
-                    env.FINAL_URL = finalUrl
+                    // Set the extracted values as global environment variables
+                    env.SVN_URL = svnUrl
+                    env.BRANCH = branch
                     
                     // Print the results
-                    echo "Repository URL: ${svnUrl}"
-                    echo "Reference: ${branch}"
+                    echo "Repository URL: ${env.SVN_URL}"
+                    echo "Branch: ${env.BRANCH}"
+                }
+            }
+        }
+        stage('Use Global Variables') {
+            steps {
+                script {
+                    // Access and use the global environment variables
+                    echo "Using SVN_URL: ${env.SVN_URL}"
+                    echo "Using BRANCH: ${env.BRANCH}"
+                    
+                    // Perform operations with SVN_URL and BRANCH
+                    def finalUrl = "${env.SVN_URL}/tree/${env.BRANCH}"
                     echo "Final URL: ${finalUrl}"
                 }
             }
         }
-        stage('Use Final URL') {
-            steps {
-                script {
-                    // Access the global environment variable
-                    echo "Accessing FINAL_URL: ${env.FINAL_URL}"
-                    // You can use env.FINAL_URL here for other operations
-                }
-            }
+    }
+    post {
+        always {
+            // This block runs after all stages are complete
+            echo "Pipeline completed. SVN_URL: ${env.SVN_URL}, BRANCH: ${env.BRANCH}"
         }
     }
 }
