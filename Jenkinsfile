@@ -18,29 +18,6 @@ triggers {
                 git url: 'https://github.com/thefallen8/Just_A_Python_Repository.git', branch: 'main', credentialsId: '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' // Replace with your repository URL and branch
             }
         }
-                stage('Extract and Concatenate Payload Information') {
-            steps {
-                script {
-                    // Parse the JSON payload manually
-                    def jsonSlurper = new groovy.json.JsonSlurper()
-                    def payload = jsonSlurper.parseText(env.PAYLOAD)
-
-                    // Extract the branch name from ref
-                    def ref = payload.ref
-                    def branch = ref.substring(ref.indexOf('feature'))
-
-                    // Extract SVN URL
-                    def svnUrl = payload.repository.svn_url
-
-                    // Concatenate the values
-                    def concatenatedResult = "${svnUrl}/tree/${branch}"
-
-                    // Print the result to the console
-                    echo "Concatenated Result: ${concatenatedResult}"
-                }
-            }
-        }
-    
         
         stage('SonarQube Analysis') {
             steps {
