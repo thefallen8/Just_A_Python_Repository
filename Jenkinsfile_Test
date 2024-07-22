@@ -3,8 +3,12 @@ echo "BRANCH: $BRANCH"
 branch="$BRANCH"
 def keyword = 'feature/'
 def startIndex = branch.indexOf(keyword)
+if (startIndex == -1) {
+    final_branch = 'main'
+} else {
 def end=branch.length()
 def final_branch= branch.substring(startIndex,end)
+}
 println "Branch $final_branch"
 
 pipeline {
